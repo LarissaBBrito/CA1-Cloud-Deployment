@@ -47,4 +47,4 @@ available_secrets:
 
 # Substitutions for the migration step
 substitutions:
-  _CLOUD_SQL_CONNECTION_NAME: 'YOUR_CONNECTION_NAME'
+  _CLOUD_SQL_CONNECTION_NAME: 'my-ca1-project-2025:europe-west1:ca1-db-instance'
