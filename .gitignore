@@ -1,0 +1,22 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environments
+.env
+venv/
+
+# Database
+*.sqlite3
+*.db
+
+# Secrets and Configuration
+*.cfg
+local.cfg
+*.env
+.env
+.env.local
+.env.production
+credentials.json
+service-account-key.json

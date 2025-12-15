@@ -1,0 +1,12 @@
+runtime: python311
+entrypoint: gunicorn -b :$PORT main:app
+
+instance_class: F1
+
+env_variables:
+  # This is the connection string for the App Engine environment
+  # App Engine automatically handles the proxy for this format
+  DATABASE_URL: "postgresql+psycopg2://ca1_user:YOUR_USER_PASSWORD@/ca1_db?host=/cloudsql/YOUR_CONNECTION_NAME"
+
+cloud_sql_instances: YOUR_CONNECTION_NAME
+# Replace YOUR_CONNECTION_NAME with the value from Step 2.2 (e.g., project-id:region:instance-name)

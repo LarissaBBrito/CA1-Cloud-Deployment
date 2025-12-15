@@ -1,0 +1,50 @@
+steps:
+# 1. Install dependencies
+- name: 'python:3.11'
+  id: Install Dependencies
+  entrypoint: 'pip'
+  args: ['install', '-r', 'requirements.txt']
+
+# 2. Database Migration (Alembic)
+# This step uses the Cloud SQL Proxy to connect to the database and runs migrations.
+- name: 'gcr.io/cloud-builders/gcloud'
+  id: Run Migrations
+  entrypoint: 'bash'
+  args:
+    - '-c'
+    - |
+      # Install Flask-Script and Flask-Migrate for the manage.py script
+      pip install Flask-Script Flask-Migrate
+      
+      # Use the secret from Secret Manager to set the DATABASE_URL environment variable
+      # The secret value is passed via secretEnv and available as a file in /workspace/secrets/
+      export DATABASE_URL=$$(cat /workspace/secrets/DATABASE_URL)
+      
+      # Install Cloud SQL Proxy
+      wget https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 -O cloud_sql_proxy
+      chmod +x cloud_sql_proxy
+      
+      # Start Cloud SQL Proxy in the background
+      ./cloud_sql_proxy -instances=${_CLOUD_SQL_CONNECTION_NAME}=tcp:5432 &
+      
+      # Wait for the proxy to start
+      sleep 5
+      
+      # Run Alembic migrations (creates the 'User' table )
+      python manage.py db upgrade
+
+# 3. Deploy to App Engine
+- name: 'gcr.io/cloud-builders/gcloud'
+  id: Deploy Application
+  args: ['app', 'deploy', 'app.yaml', '--version', 'v1', '--no-promote']
+
+timeout: '1600s'
+
+# Secrets for the migration step
+available_secrets:
+- secret: projects/$PROJECT_ID/secrets/DATABASE_URL
+  env: DATABASE_URL
+
+# Substitutions for the migration step
+substitutions:
+  _CLOUD_SQL_CONNECTION_NAME: 'YOUR_CONNECTION_NAME'
