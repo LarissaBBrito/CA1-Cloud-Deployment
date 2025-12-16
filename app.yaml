@@ -2,5 +2,4 @@ runtime: python311
 
 entrypoint: gunicorn -b :$PORT main:app
 
-env_variables:
-  DATABASE_URL: "__DATABASE_URL__"
+

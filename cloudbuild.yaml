@@ -1,36 +1,11 @@
 steps:
-# Render app.yaml with secret
-- name: 'grc.io/google.com/cloudsdktool/cloud-sdk:slim'
-  id: Render app.yaml
-  secretEnv: ['DATABASE_URL']
-  args:
-    - '-c'
-    - |
-      import os, pathlib
-      tpl = pathlib.Path("app.yaml").read_text()
-      pathlib.Path("app.yaml").write_text(tpl.replace("__DATABASE_URL__", os.environ["DATABASE_URL"]))
-
-# Run migrations
-- name: 'python:3.11-slim'
-  id: Run Migrations
-  entrypoint: 'bash'
-  secretEnv: ['DATABASE_URL']
-  args:
-    - '-c'
-    - |
-      pip install -r requirements.txt
-      pip install Flask-Migrate Flask-Script
-      python manage.py db upgrade
-
-# Deploy
 - name: 'gcr.io/cloud-builders/gcloud'
-  id: Deploy
-  args: ['app', 'deploy', '--quiet']
-
-availableSecrets:
-  secretManager:
-    - versionName: projects/$PROJECT_ID/secrets/DATABASE_URL/versions/latest
-      env: DATABASE_URL
+  id: Deploy App Engine
+  args:
+    - app
+    - deploy
+    - --quiet
 
 options:
   logging: CLOUD_LOGGING_ONLY
+
