@@ -1,6 +1,6 @@
 steps:
 # Render app.yaml with secret
-- name: 'python:3.11'
+- name: 'grc.io/google.com/cloudsdktool/cloud-sdk:slim'
   id: Render app.yaml
   secretEnv: ['DATABASE_URL']
   args:
