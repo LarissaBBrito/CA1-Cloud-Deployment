@@ -1,18 +1,6 @@
-runtime: custom
-env: flex
-service: default
+runtime: python311
 
-resources:
-  cpu: 1
-  memory_gb: 0.5
-  disk_size_gb: 10
-
-manual_scaling:
-  instances: 1
+entrypoint: gunicorn -b :$PORT main:app
 
 env_variables:
-  # This is the connection string for the App Engine environment
-  # App Engine automatically handles the proxy for this format
-  DATABASE_URL: "postgresql+psycopg2://ca1_user:Echelon@17@/ca1_db?host=/cloudsql/my-ca1-project-2025:europe-west1:ca1-db-instance"
-
-cloud_sql_instances: my-ca1-project-2025:europe-west1:ca1-db-instance
+  DATABASE_URL: "__DATABASE_URL__"
